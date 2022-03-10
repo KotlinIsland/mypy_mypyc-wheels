@@ -12,7 +12,7 @@ jobs:
         # cibuildwheel builds linux wheels inside a manylinux container
         # it also takes care of procuring the correct python version for us
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [36, 37, 38, 39, 310]
+        python-version: [37, 38, 39, 310]
 
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
         # submodules prove problematic since .git is outside cibuildwheel's manylinux container
         run: |
           COMMIT=$(cat mypy_commit)
-          git clone https://github.com/python/mypy.git
+          git clone https://github.com/KotlinIsland/mypy.git
           cd mypy
           git checkout $COMMIT
           git submodule update --init --recursive
@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           COMMIT=$(cat mypy_commit)
-          git clone https://github.com/python/mypy.git
+          git clone https://github.com/KotlinIsland/mypy.git
           cd mypy
           git checkout $COMMIT
           git submodule update --init --recursive
