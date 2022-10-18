@@ -14,11 +14,11 @@ If you're running into weird issues with a pull request, try updating the
 If wheels aren't getting built, debug over at
 https://github.com/mypyc/mypy_mypyc-wheels/actions
 
-You can use pip to install these wheels like so:
-```
-pip install --upgrade --find-links https://github.com/mypyc/mypy_mypyc-wheels/releases/tag/v0.920+dev.48181d26e7575aece8cab61eb866ac6c573dfd76 mypy
-# or possibly
-pip install --upgrade --find-links https://github.com/mypyc/mypy_mypyc-wheels/releases/latest mypy
+You can use pip to install from the latest set of wheels like so:
+```bash
+pip install --upgrade --find-links https://github.com/mypyc/mypy_mypyc-wheels/releases mypy
+# If you need a specific version then you will likely have to manually specify the url to the wheel file like so:
+pip install --upgrade https://github.com/mypyc/mypy_mypyc-wheels/releases/download/v0.990%2Bdev.4ccfca162184ddbc9139f7a3abd72ce7139a2ec3/mypy-0.990+dev-py3-none-any.whl
 ```
 
 ##  Building locally
