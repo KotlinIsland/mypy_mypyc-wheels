@@ -20,21 +20,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Checkout mypy
+      - name: Checkout basedmypy
         shell: bash
         # use a commit hash checked into a file to get the mypy revision to build.
         # submodules prove problematic since .git is outside cibuildwheel's manylinux container
         run: |
           COMMIT=$(cat mypy_commit)
-          git clone https://github.com/KotlinIsland/mypy.git
-          cd mypy
+          git clone https://github.com/KotlinIsland/basedmypy.git
+          cd basedmypy
           git checkout $COMMIT
           git submodule update --init --recursive
 
       - uses: pypa/cibuildwheel@v2.11.1
         with:
           config-file: cibuildwheel.toml
-          package-dir: mypy
+          package-dir: basedmypy
         env:
           CIBW_BUILD: "cp${{ matrix.python-version}}-*"
 
@@ -52,30 +52,30 @@ jobs:
         name: Install Python
         with:
           python-version: "3.9"
-      - name: Checkout mypy
+      - name: Checkout basedmypy
         shell: bash
         run: |
           COMMIT=$(cat mypy_commit)
-          git clone https://github.com/KotlinIsland/mypy.git
-          cd mypy
+          git clone https://github.com/KotlinIsland/basedmypy.git
+          cd basedmypy
           git checkout $COMMIT
           git submodule update --init --recursive
       - name: Run check-manifest
         run: |
-          cd mypy
+          cd basedmypy
           pip install check-manifest
           check-manifest -v
       - name: Build sdist and wheel
         run: |
-          cd mypy
+          cd basedmypy
           pip install --upgrade setuptools build
           python -m build
       - uses: actions/upload-artifact@v3
         with:
           name: dist
           path: |
-            mypy/dist/*.whl
-            mypy/dist/*.tar.gz
+            basedmypy/dist/*.whl
+            basedmypy/dist/*.tar.gz
   build_wasm_wheel:
     name: WASM wheel for 3.10
     runs-on: ubuntu-latest
@@ -98,12 +98,12 @@ jobs:
           ./emsdk activate 3.1.14
           # We need the location of emscripten when we use pyodide-build
           echo "EMSCRIPTEN_DIR=$(pwd)" >> $GITHUB_OUTPUT
-      - name: Checkout mypy
+      - name: Checkout basedmypy
         shell: bash
         run: |
           COMMIT=$(cat mypy_commit)
-          git clone https://github.com/python/mypy.git
-          cd mypy
+          git clone https://github.com/KotlinIsland/basedmypy.git
+          cd basedmypy
           git checkout $COMMIT
           git submodule update --init --recursive
       - name: Install pyodide-build
@@ -115,7 +115,7 @@ jobs:
           MYPYC_OPT_LEVEL: "3"
           EMSCRIPTEN_DIR: ${{ steps.install_emsdk.outputs.EMSCRIPTEN_DIR }}
         run: |
-          cd mypy
+          cd basedmypy
           source $EMSCRIPTEN_DIR/emsdk_env.sh
           pyodide build --exports pyinit
       - name: Install pyodide for WASM test
@@ -128,7 +128,7 @@ jobs:
         with:
           name: dist
           path: |
-            mypy/dist/*.whl
+            basedmypy/dist/*.whl
   release:
     name: create release
     needs: [build_wheels, build_sdist_python_wheel]

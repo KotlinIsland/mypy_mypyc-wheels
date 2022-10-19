@@ -27,7 +27,7 @@ With [pipx](https://pipx.pypa.io) installed, run:
 
 ```bash
 COMMIT=$(cat mypy_commit)
-git clone https://github.com/python/mypy.git --recurse-submodules
+git clone https://github.com/KotlinIsland/basedmypy.git --recurse-submodules
 (cd mypy && git checkout $COMMIT)
 pipx run cibuildwheel --config=cibuildwheel.toml mypy
 ```
