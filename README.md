@@ -16,9 +16,9 @@ https://github.com/mypyc/mypy_mypyc-wheels/actions
 
 You can use pip to install these wheels like so:
 ```bash
-pip install --upgrade --find-links https://github.com/mypyc/mypy_mypyc-wheels/releases/ mypy
+pip install --upgrade --find-links --pre https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/ basedmypy
 # If you need a specific version, specify the url as follows
-pip install --upgrade --find-links https://github.com/mypyc/mypy_mypyc-wheels/releases/expanded_assets/v0.990+dev.4ccfca162184ddbc9139f7a3abd72ce7139a2ec3 mypy
+pip install --upgrade --find-links --pre https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/expanded_assets/v1.6.0+dev.8e2443a74c9fb1726dc2c730b5e469881d3c1acf basedmypy
 ```
 
 The above options may not work (and have broken in the past) since they depend on Github's HTML
@@ -26,7 +26,7 @@ and pip doing the correct thing. If you're looking for a relatively bulletproof 
 navigate to the appropriate release page, manually select the wheel you wish to install and copy
 the URL of the correct wheel:
 ```bash
-pip install https://github.com/mypyc/mypy_mypyc-wheels/releases/download/v0.990%2Bdev.4ccfca162184ddbc9139f7a3abd72ce7139a2ec3/mypy-0.990+dev.4ccfca162184ddbc9139f7a3abd72ce7139a2ec3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+pip install https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/download/v1.6.0+dev.8e2443a74c9fb1726dc2c730b5e469881d3c1acf/basedmypy-1.6.0+dev.8e2443a74c9fb1726dc2c730b5e469881d3c1acf-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 ```
 
 ##  Building locally
@@ -36,8 +36,8 @@ With [pipx](https://pipx.pypa.io) installed, run:
 ```bash
 COMMIT=$(cat mypy_commit)
 git clone https://github.com/KotlinIsland/basedmypy.git --recurse-submodules
-(cd mypy && git checkout $COMMIT)
-pipx run cibuildwheel --config=cibuildwheel.toml mypy
+(cd basedmypy && git checkout $COMMIT)
+pipx run cibuildwheel --config=cibuildwheel.toml basedmypy
 ```
 
 Optionally add `--only=<identifier>` to build only one wheel, or set
