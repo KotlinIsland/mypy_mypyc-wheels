@@ -23,7 +23,7 @@ linux.before-all = [
 ]
 
 before-test = [
-  "pip install -r {project}/mypy/test-requirements.txt",
+  "pip install -r {project}/basedmypy/test-requirements.txt",
 ]
 
 # pytest looks for configuration files in the parent directories of where the tests live.
@@ -34,7 +34,7 @@ before-test = [
 test-command = """ \
   ( \
      DIR=$(python -c 'import mypy, os; dn = os.path.dirname; print(dn(dn(mypy.__path__[0])))') \
-     && cp '{project}/mypy/pytest.ini' '{project}/mypy/conftest.py' $DIR \
+     && cp '{project}/basedmypy/pytest.ini' '{project}/basedmypy/conftest.py' $DIR \
 \
      && MYPY_TEST_DIR=$(python -c 'import mypy.test; print(mypy.test.__path__[0])') \
      && MYPY_TEST_PREFIX='{project}/mypy' pytest $MYPY_TEST_DIR \
@@ -49,7 +49,7 @@ test-command = """ \
 windows.test-command = """ \
   bash -c "( \
     DIR=$(python -c 'import mypy, os; dn = os.path.dirname; print(dn(dn(mypy.__path__[0])))') \
-    && cp '{project}/mypy/pytest.ini' '{project}/mypy/conftest.py' $DIR \
+    && cp '{project}/basedmypy/pytest.ini' '{project}/basedmypy/conftest.py' $DIR \
 \
     && MYPY_TEST_DIR=$(python -c 'import mypy.test; print(mypy.test.__path__[0])') \
     && MYPY_TEST_PREFIX='{project}/mypy' pytest $MYPY_TEST_DIR/testcheck.py \
