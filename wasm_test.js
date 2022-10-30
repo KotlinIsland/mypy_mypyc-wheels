@@ -14,7 +14,7 @@ async function test_mypy() {
   let pyodide = await loadPyodide();
   await pyodide.loadPackage("micropip")
   let micropip = pyodide.pyimport("micropip");
-  let requirements = fs.readFileSync("mypy/mypy-requirements.txt", {encoding: "utf8"});
+  let requirements = fs.readFileSync("basedmypy/mypy-requirements.txt", {encoding: "utf8"});
   await Promise.all(
     requirements.split("\n").map(async (requirement) => {
       if (!requirement.startsWith("#") && requirement != "") {
@@ -22,7 +22,7 @@ async function test_mypy() {
       }
     })
   );
-  const dist_dir = "mypy/dist";
+  const dist_dir = "basedmypy/dist";
   const files = await fs.promises.readdir(dist_dir);
   await pyodide.loadPackage(path.join(dist_dir, files[0]));
   pyodide.runPython(`
