@@ -84,8 +84,8 @@ before-all = [
 # not musllinux_1_1. Building from source would require rust.
 # Ruff is only used for linting, safe to skip for tests.
 before-test = [
-  "sed -i -e '/ruff/d' {project}/mypy/test-requirements.txt",
-  "git -C {project}/mypy update-index --assume-unchanged test-requirements.txt",
-  "pip install -r {project}/mypy/test-requirements.txt",
+  "sed -i -e '/ruff/d' {project}/basedmypy/test-requirements.txt",
+  "git -C {project}/basedmypy update-index --assume-unchanged test-requirements.txt",
+  "pip install -r {project}/basedmypy/test-requirements.txt",
 ]
 environment = { MYPYC_OPT_LEVEL="3", MYPYC_DEBUG_LEVEL="0", CC="clang" }
