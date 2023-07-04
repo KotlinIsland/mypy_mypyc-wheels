@@ -34,13 +34,12 @@ pip install https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/download/
 With [pipx](https://pipx.pypa.io) installed, run:
 
 ```bash
-COMMIT=$(cat mypy_commit)
 git clone https://github.com/KotlinIsland/basedmypy.git --recurse-submodules
-(cd basedmypy && git checkout $COMMIT)
+git -C basedmypy checkout $(cat mypy_commit)
 pipx run cibuildwheel --config=cibuildwheel.toml basedmypy
 ```
 
-Optionally add `--only=<identifier>` to build only one wheel, or set
-`CIBW_BUILD` to some expression like `cp311-*` and include `--platform linux`
-(or some other platform). Optionally pin cibuildwheel to the version specified
-in `.github/workflows/build.yml`.
+Either add `--only=<identifier>` to build only one wheel, or set `CIBW_BUILD`
+to some expression like `cp311-*` and include `--platform linux` (or some other
+platform). Optionally pin cibuildwheel to the version specified in
+`.github/workflows/build.yml`.

@@ -2,19 +2,19 @@
 
 build-frontend = "build"
 
-# Don't build 32-bit wheels
+# Don't build 32-bit wheels or PyPy
 skip = [
   "*-manylinux_i686",
   "*-musllinux_i686",
   "*-win32",
+  "pp*",
 ]
 
 # Apple Silicon support
-# When cross-compiling on Intel, it is not possible to test arm64 and
-# the arm64 part of a universal2 wheel. Warnings will be silenced with
-# following CIBW_TEST_SKIP
-macos.archs = ["x86_64", "arm64", "universal2"]
-test-skip = "*-macosx_arm64 *_universal2:arm64"
+# When cross-compiling on Intel, it is not possible to test arm64.
+# Warnings will be silenced with the following CIBW_TEST_SKIP.
+macos.archs = ["x86_64", "arm64"]
+test-skip = "*-macosx_arm64"
 
 build-verbosity = 1
 
@@ -34,7 +34,7 @@ before-test = [
 test-command = """ \
   ( \
      DIR=$(python -c 'import mypy, os; dn = os.path.dirname; print(dn(dn(mypy.__path__[0])))') \
-     && cp '{project}/basedmypy/pytest.ini' '{project}/basedmypy/conftest.py' $DIR \
+     && cp '{project}/basedmypy/pyproject.toml' '{project}/basedmypy/conftest.py' $DIR \
 \
      && MYPY_TEST_DIR=$(python -c 'import mypy.test; print(mypy.test.__path__[0])') \
      && MYPY_TEST_PREFIX='{project}/basedmypy' pytest $MYPY_TEST_DIR \
@@ -49,7 +49,7 @@ test-command = """ \
 windows.test-command = """ \
   bash -c "( \
     DIR=$(python -c 'import mypy, os; dn = os.path.dirname; print(dn(dn(mypy.__path__[0])))') \
-    && cp '{project}/basedmypy/pytest.ini' '{project}/basedmypy/conftest.py' $DIR \
+    && cp '{project}/basedmypy/pyproject.toml' '{project}/basedmypy/conftest.py' $DIR \
 \
     && MYPY_TEST_DIR=$(python -c 'import mypy.test; print(mypy.test.__path__[0])') \
     && MYPY_TEST_PREFIX='{project}/basedmypy' pytest $MYPY_TEST_DIR/testcheck.py \
@@ -61,13 +61,16 @@ windows.test-command = """ \
 
 [tool.cibuildwheel.environment]
 MYPYC_OPT_LEVEL = "3"
+MYPYC_DEBUG_LEVEL = "0"
 
 [tool.cibuildwheel.windows.environment]
 MYPYC_OPT_LEVEL = "2"
+MYPYC_DEBUG_LEVEL = "0"
 
 [tool.cibuildwheel.linux.environment]
 # Add llvm paths to environment to eliminate scl usage (like manylinux image does for gcc toolset).
 MYPYC_OPT_LEVEL = "3"
+MYPYC_DEBUG_LEVEL = "0"
 PATH="$PATH:/opt/rh/llvm-toolset-7.0/root/usr/bin"
 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/rh/llvm-toolset-7.0/root/usr/lib64"
 CC="clang"
@@ -77,5 +80,12 @@ select = "*musllinux*"
 before-all = [
   "apk add --no-cache clang",
 ]
-environment = { MYPYC_OPT_LEVEL="3", CC="clang" }
-
+# Remove ruff from test requirements. Wheels are only provided for musllinux_1_2,
+# not musllinux_1_1. Building from source would require rust.
+# Ruff is only used for linting, safe to skip for tests.
+before-test = [
+  "sed -i -e '/ruff/d' {project}/mypy/test-requirements.txt",
+  "git -C {project}/mypy update-index --assume-unchanged test-requirements.txt",
+  "pip install -r {project}/mypy/test-requirements.txt",
+]
+environment = { MYPYC_OPT_LEVEL="3", MYPYC_DEBUG_LEVEL="0", CC="clang" }
