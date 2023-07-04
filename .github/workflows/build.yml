@@ -19,8 +19,8 @@ jobs:
         # use a commit hash checked into a file to get the mypy revision to build.
         # submodules prove problematic since .git is outside cibuildwheel's manylinux container
         run: |
-          git clone https://github.com/python/mypy.git --recurse-submodules
-          git -C mypy checkout $(cat mypy_commit)
+          git clone https://github.com/KotlinIsland/basedmypy.git --recurse-submodules
+          git -C basedmypy checkout $(cat mypy_commit)
       - name: Install cibuildwheel and pypyp
         run: |
           pipx install cibuildwheel==2.11.1
@@ -29,11 +29,11 @@ jobs:
         run: |
           MATRIX=$(
             {
-              cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform linux mypy \
+              cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform linux basedmypy \
               | pyp 'json.dumps({"only": x, "os": "ubuntu-latest"})' \
-              && cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform macos mypy \
+              && cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform macos basedmypy \
               | pyp 'json.dumps({"only": x, "os": "macos-latest"})' \
-              && cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform windows mypy \
+              && cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform windows basedmypy \
               | pyp 'json.dumps({"only": x, "os": "windows-latest"})'
             } | pyp 'json.dumps(list(map(json.loads, lines)))'
           )
