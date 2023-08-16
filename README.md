@@ -16,9 +16,9 @@ https://github.com/KotlinIsland/mypy_mypyc-wheels/actions
 
 You can use pip to install these wheels like so:
 ```bash
-pip install --upgrade --find-links --pre https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/ basedmypy
+pip install --upgrade --pre --find-links https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/ basedmypy
 # If you need a specific version, specify the url as follows
-pip install --upgrade --find-links --pre https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/expanded_assets/v1.6.0+dev.8e2443a74c9fb1726dc2c730b5e469881d3c1acf basedmypy
+pip install --upgrade --pre --find-links https://github.com/KotlinIsland/mypy_mypyc-wheels/releases/expanded_assets/v1.6.0+dev.8e2443a74c9fb1726dc2c730b5e469881d3c1acf basedmypy
 ```
 
 The above options may not work (and have broken in the past) since they depend on Github's HTML
