@@ -31,7 +31,7 @@ async function test_mypy() {
       with open('test.py', 'w') as f:
           f.write("1 + ''")
     `);
-    return pyodide.runPython("import mypy.api; mypy.api.run(['test.py'])");
+    return pyodide.runPython("import mypy.api; mypy.api.run(['test.py', '--no-pretty', '--hide-error-code-links'])");
   } catch (e) {
     console.log(`Caught error while running tests: ${e}`);
     throw e;
