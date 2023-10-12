@@ -25,11 +25,17 @@ async function test_mypy() {
   const dist_dir = "basedmypy/dist";
   const files = await fs.promises.readdir(dist_dir);
   await pyodide.loadPackage(path.join(dist_dir, files[0]));
-  pyodide.runPython(`
-    with open('test.py', 'w') as f:
-        f.write("1 + ''")
-  `);
-  return pyodide.runPython("import mypy.api; mypy.api.run(['test.py'])");
+  console.log("running test...");
+  try {
+    pyodide.runPython(`
+      with open('test.py', 'w') as f:
+          f.write("1 + ''")
+    `);
+    return pyodide.runPython("import mypy.api; mypy.api.run(['test.py'])");
+  } catch (e) {
+    console.log(`Caught error while running tests: ${e}`);
+    throw e;
+  }
 }
 
 
