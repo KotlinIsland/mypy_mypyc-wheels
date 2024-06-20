@@ -23,7 +23,7 @@ jobs:
           git -C basedmypy checkout $(cat mypy_commit)
       - name: Install cibuildwheel and pypyp
         run: |
-          pipx install cibuildwheel==2.16.2
+          pipx install cibuildwheel==2.18.0
           pipx install pypyp==1
       - id: set-matrix
         run: |
@@ -32,7 +32,7 @@ jobs:
               cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform linux basedmypy \
               | pyp 'json.dumps({"only": x, "os": "ubuntu-latest"})' \
               && cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform macos basedmypy \
-              | pyp 'json.dumps({"only": x, "os": "macos-latest"})' \
+              | pyp 'json.dumps({"only": x, "os": "macos-14"})' \
               && cibuildwheel --config-file=cibuildwheel.toml --print-build-identifiers --platform windows basedmypy \
               | pyp 'json.dumps({"only": x, "os": "windows-latest"})'
             } | pyp 'json.dumps(list(map(json.loads, lines)))'
@@ -62,23 +62,24 @@ jobs:
           git clone https://github.com/KotlinIsland/basedmypy.git --recurse-submodules
           git -C basedmypy checkout $(cat mypy_commit)
 
-      - uses: pypa/cibuildwheel@v2.16.2
+      - uses: pypa/cibuildwheel@v2.18.0
         with:
           config-file: cibuildwheel.toml
           package-dir: basedmypy
           only: ${{ matrix.only }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-${{ matrix.only }}
           path: ./wheelhouse/*.whl
+          overwrite: true
 
   build_sdist_python_wheel:
     name: sdist and python wheel
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
           python-version: "3.9"
@@ -100,22 +101,23 @@ jobs:
           cd basedmypy
           pip install --upgrade setuptools build
           python -m build
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-sdist_python_wheel
           path: |
             basedmypy/dist/*.whl
             basedmypy/dist/*.tar.gz
+          overwrite: true
   build_wasm_wheel:
     name: WASM wheel for 3.10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
           python-version: "3.10"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18.5.0 # pyodide tests with this version
       - name: Install emscripten
@@ -154,25 +156,27 @@ jobs:
       - name: Run WASM smoke test
         run: |
           node wasm_test.js
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-wasm_wheel
           path: |
             basedmypy/dist/*.whl
+          overwrite: true
   release:
     name: create release
-    needs: [build_wheels, build_sdist_python_wheel]
+    needs: [build_wheels, build_sdist_python_wheel, build_wasm_wheel]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: dist
+          pattern: dist-*
           path: dist
+          merge-multiple: true
       - name: Release
         if: ${{ github.event_name != 'pull_request' }}
         # https://github.com/actions/upload-release-asset/issues/47
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
